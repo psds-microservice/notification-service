@@ -5,9 +5,11 @@ services:
       dockerfile: deployments/Dockerfile
     ports:
       - "8092:8092"
+      - "8094:8094"
     environment:
       - APP_HOST=0.0.0.0
       - APP_PORT=8092
+      - WS_PORT=8094
       - DB_HOST=postgres
       - DB_PORT=5432
       - DB_USER=postgres

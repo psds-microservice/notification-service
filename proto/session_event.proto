@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package psds.notification;
+
+message SessionEvent {
+  string session_id = 1;
+  string user_id = 2;
+  string event = 3;
+  string payload = 4;
+}

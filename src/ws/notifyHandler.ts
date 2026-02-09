@@ -2,6 +2,16 @@ import type { NotifyHub } from '../notifyHub.js';
 
 const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
+/** Parse user_id from uWS path /ws/notify/:user_id */
+export function parseUserIdFromPath(path: string): string | null {
+  const prefix = '/ws/notify/';
+  if (!path.startsWith(prefix)) return null;
+  const rest = path.slice(prefix.length);
+  const end = rest.includes('?') ? rest.indexOf('?') : rest.length;
+  const userId = rest.slice(0, end).trim();
+  return uuidRegex.test(userId) ? userId : null;
+}
+
 interface IncomingMsg {
   subscribe_session?: string;
   unsubscribe_session?: string;
