@@ -59,8 +59,12 @@
     "NotificationServiceNotifySessionBody": {
       "type": "object",
       "properties": {
-        "message": {
+        "event": {
           "type": "string"
+        },
+        "payload": {
+          "type": "string",
+          "title": "JSON string"
         }
       }
     },

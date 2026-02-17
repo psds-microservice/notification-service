@@ -14,6 +14,7 @@ import (
 type Config struct {
 	AppHost  string
 	HTTPPort string
+	GRPCPort string
 	AppEnv   string
 	LogLevel string
 
@@ -63,6 +64,7 @@ func Load() (*Config, error) {
 	cfg := &Config{
 		AppHost:           getEnv("APP_HOST", "0.0.0.0"),
 		HTTPPort:          firstEnv("APP_PORT", "HTTP_PORT", "8092"),
+		GRPCPort:          firstEnv("GRPC_PORT", "METRICS_PORT", "9092"),
 		AppEnv:            getEnv("APP_ENV", "development"),
 		LogLevel:          getEnv("LOG_LEVEL", "info"),
 		KafkaBrokers:      kafkaBrokers,

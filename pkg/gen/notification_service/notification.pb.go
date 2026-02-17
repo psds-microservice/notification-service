@@ -10,6 +10,7 @@ import (
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	structpb "google.golang.org/protobuf/types/known/structpb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -25,7 +26,8 @@ const (
 type NotifySessionRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	Event         string                 `protobuf:"bytes,2,opt,name=event,proto3" json:"event,omitempty"`
+	Payload       *structpb.Struct       `protobuf:"bytes,3,opt,name=payload,proto3" json:"payload,omitempty"` // arbitrary JSON object (e.g. {"source": "qa"})
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -67,11 +69,18 @@ func (x *NotifySessionRequest) GetId() string {
 	return ""
 }
 
-func (x *NotifySessionRequest) GetMessage() string {
+func (x *NotifySessionRequest) GetEvent() string {
 	if x != nil {
-		return x.Message
+		return x.Event
 	}
 	return ""
+}
+
+func (x *NotifySessionRequest) GetPayload() *structpb.Struct {
+	if x != nil {
+		return x.Payload
+	}
+	return nil
 }
 
 type NotifySessionResponse struct {
@@ -122,10 +131,11 @@ var File_notification_proto protoreflect.FileDescriptor
 
 const file_notification_proto_rawDesc = "" +
 	"\n" +
-	"\x12notification.proto\x12\x14notification_service\x1a\x1cgoogle/api/annotations.proto\"@\n" +
+	"\x12notification.proto\x12\x14notification_service\x1a\x1cgoogle/api/annotations.proto\x1a\x1cgoogle/protobuf/struct.proto\"o\n" +
 	"\x14NotifySessionRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage\"'\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
+	"\x05event\x18\x02 \x01(\tR\x05event\x121\n" +
+	"\apayload\x18\x03 \x01(\v2\x17.google.protobuf.StructR\apayload\"'\n" +
 	"\x15NotifySessionResponse\x12\x0e\n" +
 	"\x02ok\x18\x01 \x01(\bR\x02ok2\xa1\x01\n" +
 	"\x13NotificationService\x12\x89\x01\n" +
@@ -147,15 +157,17 @@ var file_notification_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_notification_proto_goTypes = []any{
 	(*NotifySessionRequest)(nil),  // 0: notification_service.NotifySessionRequest
 	(*NotifySessionResponse)(nil), // 1: notification_service.NotifySessionResponse
+	(*structpb.Struct)(nil),       // 2: google.protobuf.Struct
 }
 var file_notification_proto_depIdxs = []int32{
-	0, // 0: notification_service.NotificationService.NotifySession:input_type -> notification_service.NotifySessionRequest
-	1, // 1: notification_service.NotificationService.NotifySession:output_type -> notification_service.NotifySessionResponse
-	1, // [1:2] is the sub-list for method output_type
-	0, // [0:1] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	2, // 0: notification_service.NotifySessionRequest.payload:type_name -> google.protobuf.Struct
+	0, // 1: notification_service.NotificationService.NotifySession:input_type -> notification_service.NotifySessionRequest
+	1, // 2: notification_service.NotificationService.NotifySession:output_type -> notification_service.NotifySessionResponse
+	2, // [2:3] is the sub-list for method output_type
+	1, // [1:2] is the sub-list for method input_type
+	1, // [1:1] is the sub-list for extension type_name
+	1, // [1:1] is the sub-list for extension extendee
+	0, // [0:1] is the sub-list for field type_name
 }
 
 func init() { file_notification_proto_init() }
