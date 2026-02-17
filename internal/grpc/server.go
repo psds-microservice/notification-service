@@ -12,9 +12,9 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-// Deps — зависимости gRPC-сервера
+// Deps — зависимости gRPC-сервера (D: зависимость от абстракций).
 type Deps struct {
-	Hub *service.NotifyHub
+	Hub service.SessionBroadcaster
 }
 
 // Server implements notification_service.NotificationServiceServer

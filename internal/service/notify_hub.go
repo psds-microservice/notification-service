@@ -8,6 +8,11 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+// SessionBroadcaster — интерфейс для gRPC Deps (Dependency Inversion).
+type SessionBroadcaster interface {
+	BroadcastToSession(sessionID uuid.UUID, msg []byte)
+}
+
 type NotifyHub struct {
 	mu            sync.RWMutex
 	users         map[uuid.UUID]*ClientConn
