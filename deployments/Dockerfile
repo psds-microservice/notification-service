@@ -1,17 +1,13 @@
-FROM node:20-alpine AS builder
+FROM golang:1.21-alpine AS builder
 WORKDIR /app
-COPY package*.json ./
-RUN npm ci 2>/dev/null || npm install
-COPY tsconfig.json ./
-COPY proto ./proto
-COPY src ./src
-RUN npm run build
+COPY go.mod go.sum ./
+RUN go mod download
+COPY . .
+RUN CGO_ENABLED=0 go build -ldflags="-s -w" -o /notification-service ./cmd/notification-service
 
-FROM node:20-alpine
+FROM alpine:3.19
+RUN apk --no-cache add ca-certificates
 WORKDIR /app
-COPY package*.json ./
-RUN npm ci --omit=dev 2>/dev/null || npm install --omit=dev
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/proto ./proto
-EXPOSE 8092 8094
-CMD ["node", "dist/index.js"]
+COPY --from=builder /notification-service .
+EXPOSE 8092
+CMD ["./notification-service", "api"]

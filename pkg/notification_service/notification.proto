@@ -1,0 +1,12 @@
+syntax = "proto3";
+package notification_service;
+option go_package = "github.com/psds-microservice/notification-service/pkg/gen/notification_service;notification_service";
+import "google/api/annotations.proto";
+
+service NotificationService {
+  rpc NotifySession (NotifySessionRequest) returns (NotifySessionResponse) {
+    option (google.api.http) = { post: "/notify/session/{id}"; body: "*" }; }
+}
+
+message NotifySessionRequest { string id = 1; string message = 2; }
+message NotifySessionResponse { bool ok = 1; }
