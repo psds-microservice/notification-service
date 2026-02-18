@@ -57,7 +57,7 @@ update:
 	@echo "Updating dependencies..."
 	go get -u ./...
 	go mod tidy
-	go mod vendor
+	GOWORK=off go mod vendor
 	$(MAKE) proto
 	@$(MAKE) proto-openapi 2>/dev/null || true
 	@echo "Dependencies updated"
