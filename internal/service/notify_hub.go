@@ -23,10 +23,11 @@ type NotifyHub struct {
 }
 
 type ClientConn struct {
-	UserID uuid.UUID
-	Conn   *websocket.Conn
-	Send   chan []byte
-	Meta   ClientMetadata
+	UserID    uuid.UUID
+	Conn      *websocket.Conn
+	Send      chan []byte
+	Meta      ClientMetadata
+	sendOnce  sync.Once
 }
 
 // ClientMetadata описывает базовые атрибуты подключённого клиента
@@ -49,10 +50,12 @@ func NewNotifyHub(sendQueueSize int) *NotifyHub {
 	}
 }
 
+func (c *ClientConn) closeSend() { c.sendOnce.Do(func() { close(c.Send) }) }
+
 func (h *NotifyHub) Register(userID uuid.UUID, conn *websocket.Conn, meta ClientMetadata) *ClientConn {
 	h.mu.Lock()
 	if old, ok := h.users[userID]; ok {
-		close(old.Send)
+		old.closeSend()
 		delete(h.users, userID)
 	}
 	c := &ClientConn{UserID: userID, Conn: conn, Send: make(chan []byte, h.sendQueueSize), Meta: meta}
@@ -80,7 +83,7 @@ func (h *NotifyHub) Register(userID uuid.UUID, conn *websocket.Conn, meta Client
 func (h *NotifyHub) Unregister(userID uuid.UUID) {
 	h.mu.Lock()
 	if c, ok := h.users[userID]; ok {
-		close(c.Send)
+		c.closeSend()
 		delete(h.users, userID)
 		// Удаляем пользователя из индексов регионов и ролей.
 		if c.Meta.Region != "" {
