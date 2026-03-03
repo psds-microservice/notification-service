@@ -141,10 +141,11 @@ func (h *NotifyHub) BroadcastToSession(sessionID uuid.UUID, msg []byte) {
 	h.BroadcastToUsers(userIDs, msg)
 }
 
+// SendToUser sends msg to the user's channel. Holds RLock during the non-blocking send
+// so Unregister cannot close the channel between lookup and send (avoids send on closed channel panic).
 func (h *NotifyHub) SendToUser(userID uuid.UUID, msg []byte) {
 	h.mu.RLock()
 	c := h.users[userID]
-	h.mu.RUnlock()
 	if c != nil {
 		select {
 		case c.Send <- msg:
@@ -152,6 +153,7 @@ func (h *NotifyHub) SendToUser(userID uuid.UUID, msg []byte) {
 			// queue full, drop
 		}
 	}
+	h.mu.RUnlock()
 }
 
 // BroadcastToUsers отправляет сообщение конкретному набору пользователей.
